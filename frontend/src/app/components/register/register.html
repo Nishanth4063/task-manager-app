@@ -1,0 +1,51 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Create an Account</h2>
+    
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          [(ngModel)]="userData.username" 
+          required 
+          #username="ngModel">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          [(ngModel)]="userData.email" 
+          required 
+          #email="ngModel">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          [(ngModel)]="userData.password" 
+          required 
+          #password="ngModel">
+      </div>
+
+      <button type="submit" [disabled]="!registerForm.form.valid" class="btn-primary">
+        Register
+      </button>
+    </form>
+
+    <p class="auth-redirect">
+      Already have an account? <a [routerLink]="['/login']">Login here</a>
+    </p>
+  </div>
+</div>

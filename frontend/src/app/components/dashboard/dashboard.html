@@ -1,0 +1,82 @@
+<div class="dashboard-container">
+  <!-- Top Navigation Bar -->
+  <header class="dashboard-header">
+    <div class="header-brand">
+      <h1>Task Manager</h1>
+    </div>
+    <div class="header-actions">
+      <button (click)="logout()" class="btn-logout">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="dashboard-layout">
+    <!-- Task Creation Form Card -->
+    <section class="task-form-section">
+      <div class="card">
+        <h3>Create New Task</h3>
+        <form (ngSubmit)="onCreateTask()" #taskForm="ngForm">
+          <div class="form-group">
+            <label for="title">Task Title</label>
+            <input 
+              type="text" 
+              id="title" 
+              name="title" 
+              [(ngModel)]="newTask.title" 
+              required
+              placeholder="What needs to be done?">
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea 
+              id="description" 
+              name="description" 
+              [(ngModel)]="newTask.description"
+              rows="3"
+              placeholder="Add optional details..."></textarea>
+          </div>
+          <button type="submit" [disabled]="!taskForm.form.valid" class="btn-submit">
+            Add Task
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tasks List Section -->
+    <section class="task-list-section">
+      <div class="list-header">
+        <h2>Your Tasks ({{ tasks.length }})</h2>
+      </div>
+
+      <div *ngIf="tasks.length === 0" class="empty-state">
+        <p>No tasks found. Create one to get started!</p>
+      </div>
+
+      <div class="task-grid" *ngIf="tasks.length > 0">
+        <div class="task-card" *ngFor="let task of tasks">
+          <div class="task-card-body">
+            <div class="task-meta">
+              <span class="status-badge" [ngClass]="task.status.toLowerCase()">
+                {{ task.status }}
+              </span>
+            </div>
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description || 'No description provided.' }}</p>
+          </div>
+          <div class="task-card-actions">
+            <button 
+              *ngIf="task.status !== 'Completed'"
+              (click)="updateStatus(task._id, 'Completed')" 
+              class="btn-action complete">
+              Complete
+            </button>
+            <button 
+              (click)="deleteTask(task._id)" 
+              class="btn-action delete">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
