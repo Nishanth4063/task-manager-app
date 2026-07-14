@@ -22,11 +22,9 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: 'Username or Email is already registered.' });
         }
 
-        // Generate a salt and hash the plain-text password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Store the cryptographically secured password string
         const newUser = new User({ username, email, password: hashedPassword });
         await newUser.save();
 
@@ -52,7 +50,6 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password.' });
         }
 
-        // Compare the incoming plain text password against the stored cryptographic hash
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid email or password.' });
@@ -74,45 +71,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// ==========================================
-// 3. TEMPORARY DEVELOPMENT UTILITY ROUTES
-// ==========================================
-
-// GET: http://127.0.0.1:5000/api/auth/view-users
-router.get('/view-users', async (req, res) => {
-    try {
-        const users = await User.find({}, '-password'); 
-        res.status(200).json(users);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// GET: http://127.0.0.1:5000/api/auth/purge-user?email=TARGET_EMAIL
-router.get('/purge-user', async (req, res) => {
-    try {
-        const targetEmail = req.query.email;
-        if (!targetEmail) {
-            return res.status(400).json({ error: "Provide an email query parameter. Example: ?email=test@test.com" });
-        }
-        
-        const result = await User.deleteOne({ email: targetEmail });
-        res.status(200).json({ 
-            message: `Purge attempt completed for ${targetEmail}`, 
-            details: result 
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 module.exports = router;
-// Modify this line inside routes/auth.js:
-router.get('/view-users', async (req, res) => {
-    try {
-        const users = await User.find({}); // REMOVE the '-password' argument here
-        res.status(200).json(users);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
